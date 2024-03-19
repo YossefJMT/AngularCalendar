@@ -1,4 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
 .fc-button-group .fc-button-primary {
     border: solid 0.5px black !important;
     border-radius: 10px !important;
@@ -7,6 +11,44 @@
     margin: 0.5vw !important;
 }
 
+/* calendar */
+.fc .fc-multimonth-compact .fc-multimonth-daygrid-table, .fc .fc-multimonth-compact .fc-multimonth-header-table{
+    font-size: 12px !important;
+}
+
+.fc-daygrid-day {
+    /* background-color: #d8d8d8; */
+}
+
+.fc .fc-daygrid-day-top {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.fc .fc-multimonth{
+    align-items: center;
+    justify-content: space-around;
+    background-color: white !important;
+    border-radius: 20px;
+}
+
+
+.fc-multimonth-month{
+    min-width: 200px;
+    width: 15vw !important;
+
+    min-height: 200px;
+    height: 15vw !important;
+    
+    margin: 1vw !important;
+}
+
+.fc .fc-daygrid-day-events{
+    position: relative !important;
+}
+
+/* 
 .fc-EstatalBtn-button{
     background-color: red !important;
 }
@@ -40,7 +82,4 @@
 .fc-NoAcceptadesBtn-button{
     background-color: purple !important;
     color: white !important;
-}
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+} */

@@ -3,7 +3,7 @@ const eventos = {
       { title: 'Festiu Estatal', date: '2024-03-20', backgroundColor: 'red'},
     ],
     FestiuLocal: [
-      { title: 'Festiu Local', date: '2024-03-21', backgroundColor: 'orange'},
+      { title: 'Festiu Local', date: '2024-03-20', backgroundColor: 'orange'},
     ],
     PontsAltres: [
       { title: 'Ponts/Altres', date: '2024-03-22', backgroundColor: 'blue'},

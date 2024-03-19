@@ -1,8 +1,8 @@
 .calendar{
-    width: 50vw;
+    width: 90vw;
     height: 90vh;
-    margin-left: 30vw;
-    margin-right: 20vw;
+    margin-left: 5vw;
+    margin-right: 5vw;
     margin-top: 5vh;
     margin-bottom: auto;
     background-color: #f0f0f0;
@@ -11,4 +11,3 @@
     box-shadow: 0px 0px 20px -2px black;
     padding: 2vw;
 }
-
