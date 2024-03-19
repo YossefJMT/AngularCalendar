@@ -1,1 +1,46 @@
 /* You can add global styles to this file, and also import other style files */
+.fc-button-group .fc-button-primary {
+    border: solid 0.5px black !important;
+    border-radius: 10px !important;
+    box-shadow: 0px 0px 10px -2px black !important;
+    padding: 0.5vw !important;
+    margin: 0.5vw !important;
+}
+
+.fc-EstatalBtn-button{
+    background-color: red !important;
+}
+
+.fc-LocalBtn-button{
+    background-color: orange !important;
+    color: black !important;
+
+}
+
+.fc-AltresBtn-button{
+    background-color: blue !important;
+}
+
+.fc-PersonalBtn-button{
+    background-color: green !important;
+}
+
+.fc-PermisosBtn-button{
+    background-color: aquamarine !important;
+    color: black !important;
+
+}
+
+.fc-PendentBtn-button{
+    background-color: yellow !important;
+    color: black !important;
+
+}
+
+.fc-NoAcceptadesBtn-button{
+    background-color: purple !important;
+    color: white !important;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
