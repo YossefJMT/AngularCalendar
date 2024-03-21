@@ -1,5 +1,5 @@
 import { Component, ComponentFactoryResolver, CUSTOM_ELEMENTS_SCHEMA, ViewContainerRef } from '@angular/core';
-import { Calendar, CalendarOptions, DateSelectArg } from '@fullcalendar/core';
+import { Calendar, CalendarOptions, DateSelectArg, EventSourceInput } from '@fullcalendar/core';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import multiMonthPlugin from '@fullcalendar/multimonth';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -8,6 +8,7 @@ import eventos from '../data/events';
 
 import { MatDialog } from '@angular/material/dialog';
 import { OptionsPopoverComponent } from './popover/popover.component';
+import { time } from 'console';
 
 @Component({
   selector: 'app-root',
@@ -27,9 +28,12 @@ export class AppComponent {
   title = 'CalendarProject';
   calendar!: Calendar;
 
-
   ngAfterViewInit() {
     this.initializeCalendar();
+    // Llamar a la función para agregar los event listeners cuando el componente se haya inicializado
+    document.addEventListener('DOMContentLoaded', () => {
+      this.addClickListeners();
+    });
   }
 
   initializeCalendar() {
@@ -70,12 +74,6 @@ export class AppComponent {
         dialogRef.close(); // Cierra el MatDialog después de seleccionar una opción
       }
     });
-
-    // Inserta el componente OptionsPopoverComponent en el DOM
-    const componentRef = this.viewContainerRef.createComponent(OptionsPopoverComponent);
-    componentRef.instance.optionSelected.subscribe((result: string) => {
-      dialogRef.componentInstance.optionSelected.emit(result);
-    });
   }
 
   handleOptionSelected(option: string, start: Date, end: Date) {
@@ -83,7 +81,7 @@ export class AppComponent {
   
     switch (option) {
       case 'Estatal':
-        event = { title: 'Estatal Event', start, end, backgroundColor: 'blue' };
+        event = { title: 'Estatal Event', start, end, backgroundColor: 'red', block: true };
         break;
       case 'Local':
         event = { title: 'Festiu Local', start, end, backgroundColor: 'orange' };
@@ -112,10 +110,18 @@ export class AppComponent {
     this.calendar.addEvent(event);
   }
 
-  onDateClick(arg: DateClickArg) {
-    const result = window.confirm('¿Qué acción deseas realizar?');
-    if (result) {
-      // this.makeEstatalEvent(arg.date, arg.date);
-    }
+  addClickListeners() {
+
+    // Agregar un event listener al body que escuche los clicks en cualquier lugar dentro de él
+    document.body.addEventListener('click', function(event) {
+      // Verificar si el click se produjo en un elemento con la clase .fc-event-title-container
+      if (event.target && (event.target as Element).closest('.fc-event-title-container')) {
+        console.log('Popover clicked');
+        window.alert('Popover clicked');
+      }
+    });
+
   }
+  
+
 }

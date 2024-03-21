@@ -16,8 +16,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     font-size: 12px !important;
 }
 
-.fc-daygrid-day {
-    /* background-color: #d8d8d8; */
+.fc-daygrid-day, .fc-daygrid-day-frame {
+    /* max-height: 25% !important; */
 }
 
 .fc .fc-daygrid-day-top {
@@ -48,38 +48,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     position: relative !important;
 }
 
-/* 
-.fc-EstatalBtn-button{
-    background-color: red !important;
+.fc-event-time{
+    display: none !important;
 }
 
-.fc-LocalBtn-button{
-    background-color: orange !important;
-    color: black !important;
-
+/* popup events */
+.mat-mdc-dialog-container .mdc-dialog__surface{
+    background-color: none !important;
 }
-
-.fc-AltresBtn-button{
-    background-color: blue !important;
-}
-
-.fc-PersonalBtn-button{
-    background-color: green !important;
-}
-
-.fc-PermisosBtn-button{
-    background-color: aquamarine !important;
-    color: black !important;
-
-}
-
-.fc-PendentBtn-button{
-    background-color: yellow !important;
-    color: black !important;
-
-}
-
-.fc-NoAcceptadesBtn-button{
-    background-color: purple !important;
-    color: white !important;
-} */

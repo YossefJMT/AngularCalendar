@@ -4,16 +4,18 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 import { AppComponent } from './app.component';
 
 import { OptionsPopoverComponent } from './popover/popover.component';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
     declarations: [
-        // AppComponent
         OptionsPopoverComponent
     ],
     imports: [
+        AppComponent,
         BrowserModule,
         FullCalendarModule,
-        AppComponent
+        AppComponent,
+        MatDialogModule
     ],
     providers: [],
     bootstrap: [

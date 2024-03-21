@@ -5,13 +5,13 @@ import { MatDialogRef } from '@angular/material/dialog';
   selector: 'app-options-popover',
   template: `
     <div>
-      <button (click)="selectOption('Estatal')">Estatal</button>
-      <button (click)="selectOption('Local')">Local</button>
-      <button (click)="selectOption('Ponts/Altres')">Ponts/Altres</button>
-      <button (click)="selectOption('Personal')">Personal</button>
-      <button (click)="selectOption('Permisos Baixes')">Permisos Baixes</button>
-      <button (click)="selectOption('Pendents')">Pendents</button>
-      <button (click)="selectOption('NoAcceptades')">NoAcceptades</button>
+      <button (click)="selectOption('Estatal')" style="border-color: red;">Estatal</button>
+      <button (click)="selectOption('Local')" style="border-color: orange;">Local</button>
+      <button (click)="selectOption('Ponts/Altres')" style="border-color: blue;">Ponts/Altres</button>
+      <button (click)="selectOption('Personal')" style="border-color: green;">Personal</button>
+      <button (click)="selectOption('Permisos Baixes')" style="border-color: aquamarine;">Permisos Baixes</button>
+      <button (click)="selectOption('Pendents')" style="border-color: yellow;">Pendents</button>
+      <button (click)="selectOption('NoAcceptades')" style="border-color: purple;">NoAcceptades</button>
     </div>
   `,
   styles: [
@@ -19,11 +19,16 @@ import { MatDialogRef } from '@angular/material/dialog';
       div {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 1rem;
+        margin: 1rem;
       }
 
       button {        
-        padding: 1.5rem;
+        font-size: 1rem;
+        padding: 1vh 2vw;
+        border: 5px solid;
+        border-radius: 200px;
+        background-color: #d4d4d4;
       }
     `,
   ],
