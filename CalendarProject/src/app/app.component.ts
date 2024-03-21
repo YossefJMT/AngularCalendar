@@ -115,9 +115,16 @@ export class AppComponent {
     // Agregar un event listener al body que escuche los clicks en cualquier lugar dentro de él
     document.body.addEventListener('click', function(event) {
       // Verificar si el click se produjo en un elemento con la clase .fc-event-title-container
-      if (event.target && (event.target as Element).closest('.fc-event-title-container')) {
-        console.log('Popover clicked');
-        window.alert('Popover clicked');
+      const container = (event.target as Element).closest('.fc-event-title-container');
+      if (container) {
+        // Obtener el valor del atributo data-date del elemento padre
+        const date = container.closest('[data-date]')?.getAttribute('data-date');
+
+        // obtener el tipo de evento
+        const eventType = container.textContent;
+
+        console.log('Popover clicked on date:', date + ' ' + eventType);
+        window.alert('Popover clicked on date: ' + date + ' ' + eventType);
       }
     });
 
