@@ -31,10 +31,7 @@ export class AppComponent {
 
   ngAfterViewInit() {
     this.initializeCalendar();
-    // Llamar a la función para agregar los event listeners cuando el componente se haya inicializado
-    document.addEventListener('DOMContentLoaded', () => {
-      this.addClickListeners();
-    });
+
   }
 
   initializeCalendar() {
