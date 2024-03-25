@@ -32,7 +32,6 @@ export class AppComponent {
 
   ngAfterViewInit() {
     this.initializeCalendar();
-    this.addDayClickListeners();
     this.makeSchoolYear();
   }
 
@@ -134,26 +133,6 @@ export class AppComponent {
       days.push(new Date(date));
     }
     return days;
-  }
-
-  addDayClickListeners() {
-    // Espera a que el documento esté definido
-    while (document === undefined) {  }
-    const calendarDays = document.querySelectorAll('.fc-day');
-
-    calendarDays.forEach((day) => {
-      day.addEventListener('click', (e) => {
-
-        const date = (day as HTMLElement).getAttribute('data-date');
-        if (date) {
-          if (day.classList.contains('selected')) {
-            day.classList.remove('selected');
-          } else {
-            day.classList.add('selected');
-          }
-        }
-      });
-    });
   }
 
   getColor(eventType: string) {
