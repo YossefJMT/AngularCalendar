@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { OptionsPopoverComponent } from './popover/popover.component';
 import { time } from 'console';
 import { getEventListeners, prototype } from 'events';
+import { generate } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +32,8 @@ export class AppComponent {
 
   ngAfterViewInit() {
     this.initializeCalendar();
-
+    this.addDayClickListeners();
+    this.makeSchoolYear();
   }
 
   initializeCalendar() {
@@ -50,9 +52,9 @@ export class AppComponent {
     return {
       plugins: [dayGridPlugin, interactionPlugin, multiMonthPlugin],
       initialView: 'multiMonthYear',
+      multiMonthMaxColumns: 1,
       selectable: true,
       select: this.onSelect.bind(this),
-      //dateClick: this.onDateClick.bind(this),
       events: [
         ...eventos.FestiuEstatal,
         ...eventos.FestiuLocal,
@@ -62,66 +64,171 @@ export class AppComponent {
         ...eventos.PendentConfirmacio,
         ...eventos.NoAcceptades
       ],
+      customButtons: {
+        confirmBtn: {
+          text: 'confirm',
+          click: this.confirmFunction
+        },
+        cancelBtn: {
+          text: 'cancel',
+          click: this.removeSelectedClass
+        }
+      },
+      headerToolbar: {
+        left: 'prev,today,next confirmBtn',
+        center: 'title',
+        right: 'cancelBtn multiMonthYear,dayGridMonth'
+      },
       eventClick: function(info){
         // consultamos si esta seguro de eliminar el evento
         if (confirm('¿Estás seguro de eliminar el evento?\n\nEvent clicked: ' + info.event.title + '\nDate: ' + info.event.start + '\nID: ' + info.event.id)) {
           // Accede al objeto Calendar y elimina el evento por su ID
           self.calendar.getEventById(info.event.id)?.remove();
-  
+
           // Recarga la vista del calendario
           self.calendar.render();
         }
-
       }
     };
   }
 
   onSelect(arg: DateSelectArg) {
-    const dialogRef = this.dialog.open(OptionsPopoverComponent);
+    let start = arg.start;
+    const end = arg.end;
+  
+    // Agregar un día al inicio del rango seleccionado
+    start = new Date(start);
+    start.setDate(start.getDate() + 1);
 
-    dialogRef.componentInstance.optionSelected.subscribe((result: string) => {
-      if (result) {
-        this.handleOptionSelected(result, arg.start, arg.end);
-        dialogRef.close(); // Cierra el MatDialog después de seleccionar una opción
+    // Si se selecciona solo un día, se agrega la clase 'selected' a ese día
+    if (start.getDate() === end.getDate()) {
+      const selectedDay = document.querySelector(`[data-date="${start.toISOString().slice(0, 10)}"]`);
+      if (!selectedDay){
+        return;
       }
+      if (selectedDay?.classList.contains('selected')) {
+        selectedDay.classList.remove('selected');
+      } else {
+        selectedDay.classList.add('selected')
+      }
+    } else {
+      // Si se selecciona un rango de días, se agrega la clase 'selected' a todos los días en ese rango
+      const days = this.getDaysBetweenDates(start, end);
+      days.forEach((day) => {
+        const selectedDay = document.querySelector(`[data-date="${day.toISOString().slice(0, 10)}"]`);
+        if (!selectedDay){
+          return;
+        }
+        if (selectedDay?.classList.contains('selected')) {
+          selectedDay.classList.remove('selected');
+        } else {
+          selectedDay.classList.add('selected')
+        }
+      });
+    }
+  }
+  
+  getDaysBetweenDates(start: Date, end: Date): Date[] {
+    const days = [];
+    for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
+      days.push(new Date(date));
+    }
+    return days;
+  }
+
+  addDayClickListeners() {
+    // Espera a que el documento esté definido
+    while (document === undefined) {  }
+    const calendarDays = document.querySelectorAll('.fc-day');
+
+    calendarDays.forEach((day) => {
+      day.addEventListener('click', (e) => {
+
+        const date = (day as HTMLElement).getAttribute('data-date');
+        if (date) {
+          if (day.classList.contains('selected')) {
+            day.classList.remove('selected');
+          } else {
+            day.classList.add('selected');
+          }
+        }
+      });
     });
   }
 
-  handleOptionSelected(option: string, start: Date, end: Date) {
-    let event: any = {};
-  
-    switch (option) {
+  getColor(eventType: string) {
+    switch (eventType) {
       case 'Estatal':
-        event = { title: 'Estatal Event', start, end, backgroundColor: 'red', block: true };
-        break;
+        return 'red';
       case 'Local':
-        event = { title: 'Festiu Local', start, end, backgroundColor: 'orange' };
-        break;
+        return 'orange';
       case 'Ponts/Altres':
-        event = { title: 'Ponts/Altres', start, end, backgroundColor: 'blue' };
-        break;
+        return 'blue';
       case 'Personal':
-        event = { title: 'Vacances', start, end, backgroundColor: 'green' };
-        break;
+        return 'green';
       case 'Permisos Baixes':
-        event = { title: 'Permís/Baixa', start, end, backgroundColor: 'aquamarine' };
-        break;
+        return 'aquamarine';
       case 'Pendents':
-        event = { title: 'Pendent confirmació', start, end, backgroundColor: 'yellow' };
-        break;
+        return 'yellow';
       case 'NoAcceptades':
-        event = { title: 'No acceptades', start, end, backgroundColor: 'purple' };
-        break;
+        return 'purple';
       default:
-        alert('Opción no válida');
-        break;
+        return 'black';
     }
-  
-    // Agregar el evento al calendario
-    this.calendar.addEvent(event);
   }
 
-  addClickListeners() {
+  confirmFunction = async () => {
+    const datesSelected = document.querySelectorAll('.selected');
+    const eventsType = await this.askEventType();
+    const color = this.getColor(eventsType);
+
+    this.addEventsToCalendar(datesSelected, eventsType, color);
+    this.removeSelectedClass();
+  }
+
+  removeSelectedClass() {
+    const daysSelected = document.querySelectorAll('.selected');
+    daysSelected.forEach((day) => {
+      day.classList.remove('selected');
+    });
+  }
+
+  addEventsToCalendar(dates: NodeListOf<Element>, eventType: string, color: string) {
+    dates.forEach((date) => {
+      const event = {
+        id: Math.random().toString(36).substr(2, 9),
+        title: eventType,
+        start: date.getAttribute('data-date')?.toString(),
+        end: date.getAttribute('data-date')?.toString(),
+        backgroundColor: color,
+        block: true
+      };
+
+      this.calendar.addEvent(event);
+    });
+  }
+
+  askEventType() {
+    return new Promise<string>((resolve) => {
+      const dialogRef = this.dialog.open(OptionsPopoverComponent);
+      dialogRef.componentInstance.optionSelected.subscribe((result: string) => {
+        if (result) {
+          dialogRef.close();
+          resolve(result);
+        }
+      });
+    });
+  }
+
+  makeSchoolYear() {
+    // const dates = ['2024-07', '2024-08', '2024-10']
+    // dates.forEach(month => {
+    //   const dates = document.querySelectorAll(`[data-date^="${month}"]`);
+    //   dates.forEach(div => {
+    //     div.classList.add('hidden');
+    //   });
+    // });
+    
 
   }
 }
