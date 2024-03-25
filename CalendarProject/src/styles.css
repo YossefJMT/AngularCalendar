@@ -89,3 +89,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     border-radius: 100px !important;
     
 }
+
+
+.fc-toolbar-chunk {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
