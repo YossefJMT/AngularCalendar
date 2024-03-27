@@ -1,23 +1,31 @@
-/* You can add global styles to this file, and also import other style files */
+/* Estilos globales */
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-* {transition: .5s;}
+/* Transición global */
+* {
+    transition: .5s;
+}
 
+/* Estilos para los botones del calendario */
 .fc-button-group .fc-button-primary {
     border: solid 0.5px black !important;
-    border-radius: 10px !important;
+    border-radius: 100px !important;
     box-shadow: 0px 0px 10px -2px black !important;
-    padding: 0.5vw !important;
     margin: 0.5vw !important;
 }
 
-/* calendar */
-.fc .fc-multimonth-compact .fc-multimonth-daygrid-table, .fc .fc-multimonth-compact .fc-multimonth-header-table{
+/* Estilos para la estructura del calendario */
+.fc .fc-multimonth-compact .fc-multimonth-daygrid-table,
+.fc .fc-multimonth-compact .fc-multimonth-header-table {
     font-size: 12px !important;
 }
 
-.fc-daygrid-day, .fc-daygrid-day-frame {
+.fc-daygrid-day,
+.fc-daygrid-day-frame {
     /* max-height: 25% !important; */
 }
 
@@ -27,71 +35,65 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     justify-content: center;
 }
 
-.fc .fc-multimonth{
+.fc .fc-multimonth {
     align-items: center;
     justify-content: space-around;
     background-color: white !important;
     border-radius: 20px;
 }
 
-
-.fc-multimonth-month{
+.fc-multimonth-month {
     min-width: 200px;
     width: 15vw !important;
-
     min-height: 200px;
     height: 15vw !important;
-    
     margin: 1vw !important;
 }
 
-.fc .fc-daygrid-day-events{
+.fc .fc-daygrid-day-events {
     position: relative !important;
 }
 
-.fc-event-time{
+.fc-event-time {
     display: none !important;
 }
 
-/* popup events */
-.mat-mdc-dialog-container .mdc-dialog__surface{
-    background-color: none !important;
-}
-
-
-.selected{
+/* Estilos para los eventos seleccionados */
+.selected {
     background-color: #9dc0c8 !important;
 }
 
 /* Clase para ocultar los meses */
-.hidden { display: none; }
-
-.fc-button-primary.fc-confirmBtn-button, .fc-button-primary.fc-cancelBtn-button{
-    background-color: aliceblue !important;
-    border-radius: 100px !important;
-    
-    padding: 0.25vw .75vw !important;
-    /* margin: 0 2.5vw !important; */
+.hidden {
+    display: none;
 }
 
-.fc-button-primary.fc-confirmBtn-button{
+/* Estilos para los botones de confirmación y cancelación */
+.fc-button-primary.fc-confirmBtn-button,
+.fc-button-primary.fc-cancelBtn-button {
+    background-color: aliceblue !important;
+    border-radius: 100px !important;
+    padding: 0.25vw .75vw !important;
+}
+
+.fc-button-primary.fc-confirmBtn-button {
     color: darkgreen !important;
     border: solid 0.5px green !important;
     box-shadow: 0px 0px 10px -2px green !important;
 }
 
-.fc-button-primary.fc-cancelBtn-button{
+.fc-button-primary.fc-cancelBtn-button {
     color: darkred !important;
     border: solid 0.5px red !important;
     box-shadow: 0px 0px 10px -2px red !important;
 }
 
-.fc-button-group .fc-button-primary{
-    border-radius: 100px !important;
-    
+.fc .fc-button-group {
+    align-items: center;
+    gap: 1vw !important;
 }
 
-
+/* Estilos para los elementos de la barra de herramientas */
 .fc-toolbar-chunk {
     display: flex;
     justify-content: center;
@@ -99,13 +101,47 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     flex-wrap: wrap;
 }
 
-.fc-inicioAñoEscolar-button, .fc-finalAñoEscolar-button{
+/* Estilos para los botones de navegación */
+.fc-next-button,
+.fc-prev-button {
+    min-width: 30px !important;
+    width: 4vw !important;
+    height: fit-content !important;
+}
+
+/* Estilos para los botones de inicio y final del año escolar */
+.fc-inicioAñoEscolar-button,
+.fc-finalAñoEscolar-button {
     font-size: 20px !important;
     background-color: transparent !important;
     color: black !important;
+    padding: 0.25vw 2.5vw !important;
 }
 
-.yearactive{
+/* Estilos para el año activo */
+.yearactive {
     background-color: #9dc0c8 !important;
     border-radius: 100px !important;
+}
+
+/* Estilos para el botón de eliminar */
+.fc-event-delete-btn {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: red;
+    border-radius: 100px;
+    border: 0.5px solid black;
+    box-shadow: 0px 0px 10px -2px black;
+    color: white;
+    padding: 5px;
+    cursor: pointer;
+    transform: translate(50%, -50%);
+    z-index: 10;
+}
+
+/* Mostrar el botón de eliminar al pasar el mouse sobre el evento */
+.fc-event:hover .fc-event-delete-btn {
+    display: block;
 }

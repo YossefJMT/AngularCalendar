@@ -33,6 +33,7 @@ export class AppComponent {
 
   ngAfterViewInit() {
     this.initializeCalendar();
+    
     this.configPrevNextButtons();
   }
 
@@ -56,34 +57,44 @@ export class AppComponent {
       monthStartFormat: { month: 'long', year: 'numeric', day: 'numeric'},
       selectable: true,
       select: this.onSelect.bind(this),
-      events: this.getEvents,
+      events: [
+        ...eventos.FestiuEstatal,
+        ...eventos.FestiuLocal,
+        ...eventos.PontsAltres,
+        ...eventos.Personal,
+        ...eventos.PermisosBaixes,
+        ...eventos.PendentConfirmacio,
+        ...eventos.NoAcceptades
+      ],
       customButtons: this.getBtnsConfig(self),
       headerToolbar: this.getHeaderToolbarConfig(self),
-      eventClick: function(info){
-        // consultamos si esta seguro de eliminar el evento
-        if (confirm('¿Estás seguro de eliminar el evento?\n\nEvent clicked: ' + info.event.title + '\nDate: ' + info.event.start + '\nID: ' + info.event.id)) {
-          // Accede al objeto Calendar y elimina el evento por su ID
-          self.calendar.getEventById(info.event.id)?.remove();
-
-          // Recarga la vista del calendario
-          self.calendar.render();
-        }
+      eventDidMount: function(info) {
+        // Agregar botón de eliminar al evento
+        var deleteBtn = document.createElement('div');
+        deleteBtn.classList.add('fc-event-delete-btn');
+        deleteBtn.innerHTML = '🗑️';
+        deleteBtn.addEventListener('click', function() {
+          if (confirm('¿Estás seguro de eliminar este evento?')) {
+            info.event.remove(); // Eliminar el evento del calendario
+          }
+        });
+        info.el.appendChild(deleteBtn);
       }
     };
   }
 
   getHeaderToolbarConfig(self: AppComponent) {
+    return {
+      left: 'confirmBtn',
+      center: 'prev,inicioAñoEscolar,finalAñoEscolar,next',
+      right: 'cancelBtn'
+    };
+  
     // return {
     //   left: 'confirmBtn,cancelBtn',
-    //   center: 'prev,inicioAñoEscolar title finalAñoEscolar,next',
-    //   right: 'today,multiMonthYear,dayGridMonth'
+    //   center: '',
+    //   right: 'inicioAñoEscolar finalAñoEscolar',
     // };
-  
-    return {
-      left: 'confirmBtn,cancelBtn',
-      center: 'inicioAñoEscolar finalAñoEscolar',
-      right: 'today,multiMonthYear,dayGridMonth'
-    };
   }
 
   getBtnsConfig(self: AppComponent) {
@@ -97,30 +108,18 @@ export class AppComponent {
         click: this.removeSelectedClass
       },
       inicioAñoEscolar: {
-        text: 'Inicio Año Escolar',
+        text: 'Año Escolar',
         click: function() {
           self.showInicioAñoEscolar();
         }
       },
       finalAñoEscolar: {
-        text: 'Final Año Escolar',
+        text: 'Año Escolar',
         click: function() {
           self.showFinalAñoEscolar();
         }
       },
     };
-  }
-
-  getEvents(){
-    return [
-      ...eventos.FestiuEstatal,
-      ...eventos.FestiuLocal,
-      ...eventos.PontsAltres,
-      ...eventos.Personal,
-      ...eventos.PermisosBaixes,
-      ...eventos.PendentConfirmacio,
-      ...eventos.NoAcceptades
-    ];
   }
 
   showFinalAñoEscolar() {
@@ -325,12 +324,9 @@ export class AppComponent {
 
     nextButton?.addEventListener('click', () => {
       this.calendar.prevYear();
-      if (this.showingInicioAñoEscolar) {
-        this.showingInicioAñoEscolar = false;
-      } else {
-        this.showingInicioAñoEscolar = true;
-      }
       this.showFinalAñoEscolar();
+      this.showFinalAñoEscolar();
+
     });
 
 
