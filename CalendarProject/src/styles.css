@@ -2,6 +2,7 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+* {transition: .5s;}
 
 .fc-button-group .fc-button-primary {
     border: solid 0.5px black !important;
@@ -70,7 +71,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     border-radius: 100px !important;
     
     padding: 0.25vw .75vw !important;
-    margin: 0 2.5vw !important;
+    /* margin: 0 2.5vw !important; */
 }
 
 .fc-button-primary.fc-confirmBtn-button{
@@ -96,4 +97,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
+}
+
+.fc-inicioAñoEscolar-button, .fc-finalAñoEscolar-button{
+    font-size: 20px !important;
+    background-color: transparent !important;
+    color: black !important;
+}
+
+.yearactive{
+    background-color: #9dc0c8 !important;
+    border-radius: 100px !important;
 }
