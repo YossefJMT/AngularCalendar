@@ -28,13 +28,15 @@ export class AppComponent {
   ) {}
   title = 'CalendarProject';
   calendar!: Calendar;
+  showingCalendariEscolar = false;
   showingInicioAñoEscolar = false;
 
 
   ngAfterViewInit() {
     this.initializeCalendar();
-    
-    this.configPrevNextButtons();
+    if (this.showingCalendariEscolar) {
+      this.configPrevNextButtons();
+    }
   }
 
   initializeCalendar() {
@@ -84,11 +86,21 @@ export class AppComponent {
   }
 
   getHeaderToolbarConfig(self: AppComponent) {
-    return {
-      left: 'confirmBtn',
-      center: 'prev,inicioAñoEscolar,finalAñoEscolar,next',
-      right: 'cancelBtn'
-    };
+    if (this.showingCalendariEscolar) {
+      return {
+        left: 'confirmBtn,cancelBtn',
+        center: 'prev,inicioAñoEscolar,finalAñoEscolar,next',
+        right: 'calendariEscolar'
+      };
+    } else {
+      return {
+        left: 'confirmBtn,cancelBtn',
+        center: 'prev,title,next',
+        right: 'calendariEscolar'
+      };
+    }
+
+    
   
     // return {
     //   left: 'confirmBtn,cancelBtn',
@@ -119,7 +131,20 @@ export class AppComponent {
           self.showFinalAñoEscolar();
         }
       },
+      calendariEscolar: {
+        text: 'Calendari Escolar',
+        click: function() {
+          self.toggleCalendariEscolar();
+        }
+      }
     };
+  }
+
+  toggleCalendariEscolar() {
+    this.showingCalendariEscolar = !this.showingCalendariEscolar;
+    this.initializeCalendar();
+    const calendariEscolarBtn = document.querySelector('.fc-calendariEscolar-button');
+    calendariEscolarBtn?.setAttribute('title', this.showingCalendariEscolar ? 'Ocultar calendari escolar' : 'Mostrar calendari escolar');
   }
 
   showFinalAñoEscolar() {
