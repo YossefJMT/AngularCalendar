@@ -1,6 +1,6 @@
-import { Component, ComponentFactoryResolver, CUSTOM_ELEMENTS_SCHEMA, ViewContainerRef } from '@angular/core';
+import { Component, ComponentFactoryResolver, CUSTOM_ELEMENTS_SCHEMA, ViewChild, ViewContainerRef } from '@angular/core';
 import { Calendar, CalendarOptions, DateSelectArg, EventSourceInput } from '@fullcalendar/core';
-import { FullCalendarModule } from '@fullcalendar/angular';
+import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
 import multiMonthPlugin from '@fullcalendar/multimonth';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'; // Importa DateClickArg aquí
@@ -17,7 +17,12 @@ import { parse } from 'path';
   selector: 'app-root',
   standalone: true,
   imports: [FullCalendarModule],
-  template: '<div class="calendar" id="calendar"></div>',
+  templateUrl: './app.component.html', // Remove the square brackets
+  // template: `
+  //   <!-- <div class="calendar" id="calendar"></div> -->
+  //   <br>
+  //   <full-calendar class="calendar" #calendar [options]="calendarOptions"></full-calendar>
+  // `,
   styleUrls: ['./app.component.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
@@ -28,22 +33,23 @@ export class AppComponent {
   ) {}
   title = 'CalendarProject';
   calendar!: Calendar;
-  showingCalendariEscolar = false;
+  showingCalendariEscolar = true;
   showingInicioAñoEscolar = false;
-
+  calendarOptions = this.getCalendarOptions();
 
   ngAfterViewInit() {
     this.initializeCalendar();
-    if (this.showingCalendariEscolar) {
-      this.configPrevNextButtons();
-    }
+    // this.configPrevNextButtons();
   }
 
   initializeCalendar() {
     if (typeof document !== 'undefined') {
-      const calendarEl = document.getElementById('calendar');
+      const calendarEl = document.querySelector('full-calendar') as HTMLElement;
       if (calendarEl) {
         this.calendar = new Calendar(calendarEl, this.getCalendarOptions());
+        // this.calendarOptions = this.getCalendarOptions();
+        this.showInicioAñoEscolar();
+
         this.calendar.render();
       }
     }
@@ -89,7 +95,7 @@ export class AppComponent {
     if (this.showingCalendariEscolar) {
       return {
         left: 'confirmBtn,cancelBtn',
-        center: 'prev,inicioAñoEscolar,finalAñoEscolar,next',
+        center: 'prevCourse,actualCourse,nextCourse inicioAñoEscolar,finalAñoEscolar',
         right: 'calendariEscolar'
       };
     } else {
@@ -99,14 +105,6 @@ export class AppComponent {
         right: 'calendariEscolar'
       };
     }
-
-    
-  
-    // return {
-    //   left: 'confirmBtn,cancelBtn',
-    //   center: '',
-    //   right: 'inicioAñoEscolar finalAñoEscolar',
-    // };
   }
 
   getBtnsConfig(self: AppComponent) {
@@ -120,34 +118,61 @@ export class AppComponent {
         click: this.removeSelectedClass
       },
       inicioAñoEscolar: {
-        text: 'Año Escolar',
+        text: '',
         click: function() {
           self.showInicioAñoEscolar();
         }
       },
       finalAñoEscolar: {
-        text: 'Año Escolar',
+        text: '',
         click: function() {
           self.showFinalAñoEscolar();
         }
       },
       calendariEscolar: {
-        text: 'Calendari Escolar',
+        text: 'Canviar calendari escolar',
         click: function() {
           self.toggleCalendariEscolar();
         }
+      },
+      nextCourse: {
+        text: '>',
+        click: function() {
+          self.showNextCourse();
+        }
+      },
+      prevCourse: {
+        text: '<',
+        click: function() {
+          self.showPrevCourse();
+        }
+      },
+      actualCourse: {
+        text: ''
       }
     };
   }
 
   toggleCalendariEscolar() {
     this.showingCalendariEscolar = !this.showingCalendariEscolar;
+    this.calendarOptions = this.getCalendarOptions();
     this.initializeCalendar();
-    const calendariEscolarBtn = document.querySelector('.fc-calendariEscolar-button');
-    calendariEscolarBtn?.setAttribute('title', this.showingCalendariEscolar ? 'Ocultar calendari escolar' : 'Mostrar calendari escolar');
+    if (this.showingCalendariEscolar) {
+      this.showInicioAñoEscolar();
+    }
+
+    const calendariEscolarBtn = document.querySelector('.fc-calendariEscolar-button') as HTMLElement | null;
+    if (calendariEscolarBtn) {
+      // calendariEscolarBtn.textContent = this.showingCalendariEscolar ? 'Ocultar calendari escolar' : 'Mostrar calendari escolar';
+      // calendariEscolarBtn?.setAttribute('title', this.showingCalendariEscolar ? 'Ocultar calendari escolar' : 'Mostrar calendari escolar');
+
+    }
+    
+
   }
 
   showFinalAñoEscolar() {
+    //window.alert('finalAñoEscolar');
     this.calendar.nextYear();
     if (this.showingInicioAñoEscolar == false) {
       this.showInicioAñoEscolar();
@@ -168,23 +193,16 @@ export class AppComponent {
     });
     this.showingInicioAñoEscolar = false;
 
-    const elementInicioview = document.querySelector('.fc-inicioAñoEscolar-button');
-    if (elementInicioview) {
-      elementInicioview.textContent = (parseInt(year)-1).toString();
-      elementInicioview.classList.remove('yearactive');
-    }
+    this.updateYearsViews(year);
     
-    const elementFinalview = document.querySelector('.fc-finalAñoEscolar-button');
-    if (elementFinalview) {
-      elementFinalview.textContent = (parseInt(year)).toString();
-      elementFinalview.classList.add('yearactive');
-    }
+
   }
 
   showInicioAñoEscolar() {
+    //window.alert('inicioAñoEscolar');
     this.calendar.prevYear();
     if (this.showingInicioAñoEscolar) {
-      this.calendar.prevYear();
+      //this.calendar.prevYear();
       this.showFinalAñoEscolar();
       this.showingInicioAñoEscolar = false;
 
@@ -204,17 +222,42 @@ export class AppComponent {
     });
     this.showingInicioAñoEscolar = true;
 
-    const elementInicioview = document.querySelector('.fc-inicioAñoEscolar-button');
-    if (elementInicioview) {
-      elementInicioview.textContent = (parseInt(year)).toString();
-      elementInicioview.classList.add('yearactive');
-    }
-    
-    const elementFinalview = document.querySelector('.fc-finalAñoEscolar-button');
-    if (elementFinalview) {
-      elementFinalview.textContent = (parseInt(year)+1).toString();
-      elementFinalview.classList.remove('yearactive');
+    this.updateYearsViews(year);
+  }
 
+  updateYearsViews(year: string) {
+    const elementInicioview = document.querySelector('.fc-inicioAñoEscolar-button');
+    const elementFinalview = document.querySelector('.fc-finalAñoEscolar-button');
+    const elementActualview = document.querySelector('.fc-actualCourse-button');
+
+    if (this.showingInicioAñoEscolar) {
+      if (elementInicioview) {
+        elementInicioview.textContent = (parseInt(year)).toString();
+        elementInicioview.classList.add('yearactive');
+      }
+      
+      if (elementFinalview) {
+        elementFinalview.textContent = (parseInt(year)+1).toString();
+        elementFinalview.classList.remove('yearactive');
+      }
+
+      if (elementActualview) {
+        elementActualview.textContent = (parseInt(year)).toString() + '/' + (parseInt(year)+1).toString().substring(2, 4);
+      }
+
+    } else {
+      if (elementInicioview) {
+        elementInicioview.textContent = (parseInt(year)-1).toString();
+        elementInicioview.classList.remove('yearactive');
+      }
+      
+      if (elementFinalview) {
+        elementFinalview.textContent = (parseInt(year)).toString();
+        elementFinalview.classList.add('yearactive');
+      }
+      if (elementActualview) {
+        elementActualview.textContent = (parseInt(year)-1).toString() + '/' + (parseInt(year)).toString().substring(2, 4);
+      }
     }
   }
 
@@ -333,28 +376,65 @@ export class AppComponent {
     return this.calendar.getCurrentData().dateProfile.currentRange.start.toISOString().slice(0, 4);
   }
 
+  showNextCourse() {
+    // this.calendar.nextYear();
+    if (this.showingInicioAñoEscolar) {
+      this.showFinalAñoEscolar();
+      this.showFinalAñoEscolar();
+    } else {
+      this.showFinalAñoEscolar();
+      this.showFinalAñoEscolar();
+    }
+  }
+
+  showPrevCourse() {
+    // this.calendar.prevYear();
+    if (this.showingInicioAñoEscolar) {
+      this.showInicioAñoEscolar();
+      this.showInicioAñoEscolar();
+    } else {
+      this.showInicioAñoEscolar();
+      this.showInicioAñoEscolar();
+    }
+
+  }
+
+
+
+
+
+
+
+
+
   configPrevNextButtons() {
     const prevButton = document.querySelector('.fc-prev-button');
     const nextButton = document.querySelector('.fc-next-button');
-
     prevButton?.addEventListener('click', () => {
-      this.calendar.nextYear();
-      if (this.showingInicioAñoEscolar) {
-        this.showingInicioAñoEscolar = false;
-      } else {
-        this.showingInicioAñoEscolar = true;
+      if (this.showingCalendariEscolar == false) {
+        return;
       }
-      this.showInicioAñoEscolar();
+      // this.calendar.nextYear();
+      // if (this.showingInicioAñoEscolar) {
+      //   this.showingInicioAñoEscolar = false;
+      // } else {
+      //   this.showingInicioAñoEscolar = true;
+      // }
+      window.alert('prevButton');
+      //this.showInicioAñoEscolar();
     });
 
     nextButton?.addEventListener('click', () => {
-      this.calendar.prevYear();
-      this.showFinalAñoEscolar();
-      this.showFinalAñoEscolar();
+      if (this.showingCalendariEscolar == false) {
+        return;
+      }
+      window.alert('nextButton');
+      // this.calendar.prevYear();
+      //this.showFinalAñoEscolar();
+      // this.showFinalAñoEscolar();
 
     });
 
 
   }
-
 }

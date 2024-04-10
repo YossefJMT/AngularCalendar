@@ -12,9 +12,9 @@ html, body {
 
 /* Estilos para los botones del calendario */
 .fc-button-group .fc-button-primary {
-    border: solid 0.5px black !important;
+    /* border: solid 0.5px black !important; */
     border-radius: 100px !important;
-    box-shadow: 0px 0px 10px -2px black !important;
+    /* box-shadow: 0px 0px 10px -2px black !important; */
     margin: 0.5vw !important;
 }
 
@@ -112,10 +112,13 @@ html, body {
 /* Estilos para los botones de inicio y final del año escolar */
 .fc-inicioAñoEscolar-button,
 .fc-finalAñoEscolar-button {
-    font-size: 20px !important;
+    font-size: 18px !important;
     background-color: transparent !important;
     color: black !important;
-    padding: 0.25vw 2.5vw !important;
+    border: solid 0.5px grey !important;
+    border-radius: 100px !important;
+    box-shadow: 0px 0px 5px -2px black !important;
+    padding: 0.0vw 1.5vw !important;
 }
 
 /* Estilos para el año activo */
@@ -144,4 +147,33 @@ html, body {
 /* Mostrar el botón de eliminar al pasar el mouse sobre el evento */
 .fc-event:hover .fc-event-delete-btn {
     display: block;
+}
+
+/* Estilos para la gestion anual del calendario */
+.fc-toolbar-chunk:nth-child(2){
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+}
+
+.fc-nextCourse-button, .fc-prevCourse-button {
+    font-size: 20px !important;
+    background-color: transparent !important;
+    color: black !important;
+    border: none !important;
+    padding: 0vw 1.25vw !important;
+    box-shadow: 0px 0px 10px grey !important;
+}
+
+.fc-actualCourse-button{
+    font-size: 25px !important;
+    background-color: transparent !important;
+    color: black !important;
+    border: 2px solid #626262 !important;
+    border-top: none !important;
+    padding: 0vw 1.25vw !important;
+    border-radius: 100px !important;
+    box-shadow: 0px 2px 6px -2px grey !important;
 }
