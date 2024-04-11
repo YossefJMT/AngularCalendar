@@ -8,10 +8,16 @@ import eventos from '../data/events';
 
 import { MatDialog } from '@angular/material/dialog';
 import { OptionsPopoverComponent } from './popover/popover.component';
-import { time } from 'console';
+import { log, time } from 'console';
 import { getEventListeners, prototype } from 'events';
 import { generate } from 'rxjs';
 import { parse } from 'path';
+import { s } from '@fullcalendar/core/internal-common';
+
+interface Intervalo {
+  start: Date;
+  end: Date;
+}
 
 @Component({
   selector: 'app-root',
@@ -36,6 +42,8 @@ export class AppComponent {
   showingCalendariEscolar = true;
   showingInicioAñoEscolar = false;
   calendarOptions = this.getCalendarOptions();
+  selectedIntervals: Intervalo[] = [];
+
 
   ngAfterViewInit() {
     this.initializeCalendar();
@@ -121,12 +129,16 @@ export class AppComponent {
         text: '',
         click: function() {
           self.showInicioAñoEscolar();
+          self.reapplySelectedClass();
+
         }
       },
       finalAñoEscolar: {
         text: '',
         click: function() {
           self.showFinalAñoEscolar();
+          self.reapplySelectedClass();
+
         }
       },
       calendariEscolar: {
@@ -167,8 +179,6 @@ export class AppComponent {
       // calendariEscolarBtn?.setAttribute('title', this.showingCalendariEscolar ? 'Ocultar calendari escolar' : 'Mostrar calendari escolar');
 
     }
-    
-
   }
 
   showFinalAñoEscolar() {
@@ -262,46 +272,118 @@ export class AppComponent {
   }
 
   onSelect(arg: DateSelectArg) {
-    let start = arg.start;
-    const end = arg.end;
-  
-    // Agregar un día al inicio del rango seleccionado
-    start = new Date(start);
-    start.setDate(start.getDate() + 1);
+    let start = new Date(arg.start);
+    const end = new Date(arg.end);
+    console.log(start, end)
 
-    // Si se selecciona solo un día, se agrega la clase 'selected' a ese día
+    // Agregar un día al inicio del rango seleccionado
+    start.setDate(start.getDate()+1);
+
     if (start.getDate() === end.getDate()) {
-      const selectedDay = document.querySelector(`[data-date="${start.toISOString().slice(0, 10)}"]`);
-      if (!selectedDay){
+      // miramos si ese dia ya esta .selected
+      if (document.querySelector(`[data-date="${start.toISOString().slice(0, 10)}"]`)?.classList.contains('selected')) {
+        window.alert('Ya has seleccionado este día');
         return;
       }
-      if (selectedDay?.classList.contains('selected')) {
-        selectedDay.classList.remove('selected');
-      } else {
-        selectedDay.classList.add('selected')
-      }
+
+      // Si se selecciona solo un día, aplicar lógica actual y agregar al array
+      this.applySelectionLogic(start);
+
+      this.addInterval(start, end);
     } else {
-      // Si se selecciona un rango de días, se agrega la clase 'selected' a todos los días en ese rango
+      // Si se selecciona un rango de días, aplicar lógica actual para cada día y agregar al array
+      this.addIntervalWithSlice(start, end);
+      console.log('all days addet to array')
+      
       const days = this.getDaysBetweenDates(start, end);
       days.forEach((day) => {
-        const selectedDay = document.querySelector(`[data-date="${day.toISOString().slice(0, 10)}"]`);
-        if (!selectedDay){
-          return;
-        }
-        if (selectedDay?.classList.contains('selected')) {
-          selectedDay.classList.remove('selected');
-        } else {
-          selectedDay.classList.add('selected')
-        }
+        // window.alert('Selecciona un rango de días'+day);
+        this.applySelectionLogic(day);
       });
     }
   }
+
+  applySelectionLogic(date: Date) {
+    const selectedDay = document.querySelector(`[data-date="${date.toISOString().slice(0, 10)}"]`);
+    if (!selectedDay) {
+      return;
+    }
+    if (selectedDay.classList.contains('selected')) {
+      return;      
+    }
+
+    selectedDay.classList.add('selected');
+    // this.addInterval(date);
+    
+  }
+
+  addInterval(start: Date, end: Date) {
+    start.setDate(start.getDate()-1);
+    this.selectedIntervals.push({ start, end });
+
+    console.log(this.selectedIntervals);
+  }
+
+  addIntervalWithSlice(startIn: Date, endIn: Date) {
+    let slice = false;
+    const start = new Date(startIn);
+    const end = new Date(endIn);
+    const days = this.getDaysBetweenDates(start, end);
+    let currentStart = new Date(start);
   
+    for (const day of days) {
+      const selectedDay = document.querySelector(`[data-date="${day.toISOString().slice(0, 10)}"]`);
+  
+      if (selectedDay && selectedDay.classList.contains('selected')) {
+        console.log('Ya has seleccionado este día');
+        if (currentStart < day) {
+          this.addInterval(currentStart, new Date(day.getTime() - 86400000)); // Agregar intervalo antes del día seleccionado
+        }
+        currentStart = new Date(day.getTime() + 86400000); // Establecer el siguiente día como inicio
+        slice = true;
+      }
+    }
+  
+    if (currentStart <= end) {
+      this.addInterval(currentStart, end); // Agregar intervalo restante
+    }
+  
+    console.log(this.selectedIntervals);
+  }
+  
+  reapplySelectedClass() {
+    const allDays = document.querySelectorAll('[data-date]');
+    allDays.forEach(day => {
+      day.classList.remove('selected');
+    });
+
+    this.selectedIntervals.forEach(interval => {
+      const startDate = new Date(interval.start);
+      const endDate = new Date(interval.end);
+      const currentDate = new Date(startDate);
+  
+      while (currentDate <= endDate) {
+        const dateStr = currentDate.toISOString().slice(0, 10);
+        const selectedDay = document.querySelector(`[data-date="${dateStr}"]`);
+        if (selectedDay) {
+          selectedDay.classList.add('selected');
+        }
+        currentDate.setDate(currentDate.getDate() + 1); // Avanzar al siguiente día
+      }
+    });
+  }
+  
+  
+  
+  
+  
+
   getDaysBetweenDates(start: Date, end: Date): Date[] {
     const days = [];
     for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
       days.push(new Date(date));
     }
+    // console.log(days);
     return days;
   }
 
@@ -343,6 +425,7 @@ export class AppComponent {
     daysSelected.forEach((day) => {
       day.classList.remove('selected');
     });
+    this.selectedIntervals = [];
   }
 
   addEventsToCalendar(dates: NodeListOf<Element>, eventType: string, color: string) {
