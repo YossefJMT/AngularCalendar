@@ -44,6 +44,6 @@ El componente `AppComponent` utiliza FullCalendar para mostrar el calendario y g
 El proyecto ha sido desarrollado con el objetivo de aprender las bases de Angular y proporcionar una funcionalidad útil para la empresa, con la intención de evolucionar hacia una solución más completa e integrada con una API para una gestión más dinámica de eventos y horarios.
 
 # Proyecto de Inicio de Angular: CalendarInitial
-El proyecto "CalendarInitial" es un seguimiento del tutorial de Angular para tener el primer contacto con el lenguaje. Este proyecto proporciona una estructura inicial básica para una aplicación web utilizando Angular y presenta un enfoque inicial en la configuración de rutas y componentes.
+El proyecto "AngularInitial" es un seguimiento del tutorial de Angular para tener el primer contacto con el lenguaje. Este proyecto proporciona una estructura inicial básica para una aplicación web utilizando Angular y presenta un enfoque inicial en la configuración de rutas y componentes.
 
 Si necesitas más información o detalles específicos, no dudes en preguntar.
